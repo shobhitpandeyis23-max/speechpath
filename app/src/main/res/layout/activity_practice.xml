@@ -77,27 +77,10 @@
             android:layout_width="0dp"
             android:layout_height="62dp"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="14dp"
             android:text="Record"
             android:textStyle="bold"/>
-            
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="0dp"
-            android:layout_height="62dp"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:text="Next"
-            android:textStyle="bold"/>
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:visibility="gone" />
 
 
     <TextView
@@ -109,17 +92,7 @@
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#222222"
-        android:layout_marginTop="30dp"/>
-
-    <TextView
-        android:id="@+id/txtRecognized"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:gravity="center"
-        android:textSize="16sp"
-        android:textColor="#888888"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="55dp"/>
 
     <TextView
         android:id="@+id/txtFeedback"
