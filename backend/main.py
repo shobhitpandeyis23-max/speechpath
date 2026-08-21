@@ -49,16 +49,15 @@ async def score_audio(
         print(f"Received audio for scoring")
         print(f"  Expected word: {expected_text}")
         print(f"  Target phoneme: {target_phoneme}")
-        print(f"  Audio file: {audio_file.filename} ({audio_file.content_type})")
-        print(f"  Temp path: {temp_path}")
         print(f"  File size: {os.path.getsize(temp_path)} bytes")
 
         # Step 1: Transcribe the audio
         recognized_text, confidence = transcribe_audio(temp_path)
+        
         print(f"  Recognized: \"{recognized_text}\" (confidence: {confidence:.2f})")
 
         # Step 2: Calculate pronunciation score
-        score = calculate_score(expected_text, recognized_text, confidence)
+        score = calculate_score(expected_text, recognized_text, confidence, target_phoneme)
         print(f"  Score: {score}%")
 
         # Step 3: Generate feedback

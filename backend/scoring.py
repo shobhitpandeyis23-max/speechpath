@@ -67,11 +67,8 @@ def phonetic_score(expected_word: str, recognized_text: str) -> float:
     if not recognized_phonemes:
         return 0.0
 
-    # Compare phoneme sequences using SequenceMatcher
-    expected_str = " ".join(expected_phonemes)
-    recognized_str = " ".join(recognized_phonemes)
-
-    return SequenceMatcher(None, expected_str, recognized_str).ratio()
+    # Compare phoneme sequences using SequenceMatcher on lists directly
+    return SequenceMatcher(None, expected_phonemes, recognized_phonemes).ratio()
 
 
 def text_similarity(expected: str, recognized: str) -> float:
@@ -87,7 +84,8 @@ def text_similarity(expected: str, recognized: str) -> float:
 def calculate_score(
     expected_word: str,
     recognized_text: str,
-    confidence: float
+    confidence: float,
+    target_phoneme: str
 ) -> int:
     """
     Calculate the final pronunciation score (0-100) using three layers:
@@ -130,6 +128,26 @@ def calculate_score(
 
     # Weighted combination
     final_score = (word_match * 0.40) + (best_phonetic * 0.40) + (conf_score * 0.20)
+    
+    # Strict Penalty: if the target phoneme is completely missing from the recognized word's phonemes
+    clean_target = target_phoneme.strip("/").upper()
+    
+    # We only apply this penalty if the expected word actually contained the target phoneme,
+    # and the recognized word didn't.
+    expected_phonemes = get_phonemes(expected_word)
+    recognized_phonemes = get_phonemes(recognized_text)
+    
+    has_target_expected = any(clean_target in p for p in expected_phonemes)
+    has_target_recognized = any(clean_target in p for p in recognized_phonemes)
+    
+    if has_target_expected and not has_target_recognized:
+        print(f"  [STRICT] Target phoneme /{clean_target}/ missing in recognized text '{recognized_text}'! Penalizing score by 50%.")
+        final_score *= 0.50
+    
+    # Actually, we can make text similarity stricter too:
+    if word_match < 0.9:
+        # If it's not an exact word match, punish the final score by 20%
+        final_score *= 0.8
 
     # Convert to 0-100 and clamp
     return max(0, min(100, round(final_score * 100)))
