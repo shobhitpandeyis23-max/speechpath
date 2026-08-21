@@ -19,6 +19,9 @@ class ScoreViewModel : ViewModel() {
     val errorMessage =
         MutableLiveData<String>()
 
+    val isLoading =
+        MutableLiveData<Boolean>()
+
     fun uploadWavFile(
         wavFile: File,
         expectedText: String,
@@ -26,7 +29,7 @@ class ScoreViewModel : ViewModel() {
     ) {
 
         viewModelScope.launch {
-
+            isLoading.value = true
             try {
 
                 val requestFile =
@@ -79,6 +82,8 @@ class ScoreViewModel : ViewModel() {
 
                 errorMessage.value =
                     e.message
+            } finally {
+                isLoading.value = false
             }
         }
     }

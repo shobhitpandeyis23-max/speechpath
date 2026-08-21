@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
@@ -89,13 +90,22 @@ class PracticeActivity : AppCompatActivity() {
 
         val txtScore =
             findViewById<TextView>(R.id.txtScore)
+            
+        val txtRecognized =
+            findViewById<TextView>(R.id.txtRecognized)
 
          txtFeedback =
             findViewById<TextView>(R.id.txtFeedback)
+            
+        val progressLoading =
+            findViewById<ProgressBar>(R.id.progressLoading)
+            
         val btnHear =
             findViewById<Button>(R.id.btnHear)
         val btnRecord =
             findViewById<Button>(R.id.btnRecord)
+        val btnNext =
+            findViewById<Button>(R.id.btnNext)
         val btnBack =
             findViewById<android.widget.ImageButton>(R.id.btnBack)
         txtPhoneme.text = "$phoneme Sound"
@@ -137,10 +147,21 @@ class PracticeActivity : AppCompatActivity() {
                     "Audio saved successfully"
             }
         }
+        btnNext.setOnClickListener {
+            currentWordIndex = (currentWordIndex + 1) % words.size
+            txtWord.text = words[currentWordIndex].uppercase()
+            txtScore.text = "Score: --"
+            txtRecognized.text = ""
+            txtFeedback.text = "Try your best!"
+        }
+
         scoreViewModel.scoreResult.observe(this) {
 
             txtScore.text =
                 "Score: ${it.score}%"
+
+            txtRecognized.text = 
+                "Recognized: \"${it.recognized_text}\""
 
             txtFeedback.text =
                 it.feedback
@@ -149,6 +170,21 @@ class PracticeActivity : AppCompatActivity() {
         scoreViewModel.errorMessage.observe(this) {
 
             txtFeedback.text = it
+        }
+
+        scoreViewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                progressLoading.visibility = View.VISIBLE
+                btnRecord.isEnabled = false
+                btnHear.isEnabled = false
+                btnNext.isEnabled = false
+                txtFeedback.text = "Scoring..."
+            } else {
+                progressLoading.visibility = View.GONE
+                btnRecord.isEnabled = true
+                btnHear.isEnabled = true
+                btnNext.isEnabled = true
+            }
         }
 
     }
