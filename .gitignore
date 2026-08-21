@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+venv/
+mock_backend.py
+*.pyc
+__pycache__/
+local.properties
